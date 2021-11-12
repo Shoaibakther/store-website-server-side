@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors');
-// const admin = require("firebase-admin");
+
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
@@ -44,7 +44,8 @@ async function run() {
         await client.connect();
         const database = client.db('sunglassStore');
            const productsCollection = database.collection('products');
-          const usersCollection = database.collection('users')
+      const usersCollection = database.collection('users');
+      const ordersCollection = database.collection('orders');
         
         // Get all products 
          app.get('/products', async (req, res) => {
@@ -54,11 +55,25 @@ async function run() {
          })
       // Get single api 
         app.get('/products/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) }
+          const id = req.params.id;
+          console.log(id);
+          const query = { _id: ObjectId(id) };
             const service = await productsCollection.findOne(query)
             res.json(service)
         })
+      // add order 
+       app.post('/addOrder', async (req, res) => {
+            const service = req.body;
+            const result = await ordersCollection.insertOne(service)
+            // console.log(result);
+            res.json(result)
+       })
+      
+        // Get Orders 
+            app.get("/myOrders/:email", async (req, res) => {
+                const result = await ordersCollection.find({ email: req.params.email }).toArray();
+                res.send(result);
+            })
         
         // post api 
         app.post('/products', async (req, res) => {
