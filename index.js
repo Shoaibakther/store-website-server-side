@@ -7,7 +7,7 @@ const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
 
 
-const port = process.env.PORT || 7000;
+const port = process.env.PORT || 5000;
 
 var admin = require("firebase-admin");
 
@@ -66,7 +66,7 @@ async function run() {
        app.post('/addOrder', async (req, res) => {
             const service = req.body;
             const result = await ordersCollection.insertOne(service)
-            // console.log(result);
+            
             res.json(result)
        })
       
@@ -75,6 +75,21 @@ async function run() {
                 const result = await ordersCollection.find({ email: req.params.email }).toArray();
                 res.send(result);
             })
+      // Manage all orders 
+       app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({})
+            const products = await cursor.toArray();
+            res.send(products)
+       })
+      
+      // Manage Products 
+
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productsCollection.deleteOne(query)
+            res.json(result)
+        })
         
         // post api 
         app.post('/products', async (req, res) => {
