@@ -75,14 +75,14 @@ async function run() {
                 const result = await ordersCollection.find({ email: req.params.email }).toArray();
                 res.send(result);
             })
-      // Manage all orders 
+      // Manage all orders and selected item
        app.get('/orders', async (req, res) => {
             const cursor = ordersCollection.find({})
             const products = await cursor.toArray();
             res.send(products)
        })
       
-      // Manage Products 
+      // Manage Products and delete
 
         app.delete('/products/:id', async (req, res) => {
             const id = req.params.id;
