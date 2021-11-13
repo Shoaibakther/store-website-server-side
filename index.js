@@ -46,6 +46,7 @@ async function run() {
            const productsCollection = database.collection('products');
       const usersCollection = database.collection('users');
       const ordersCollection = database.collection('orders');
+      const reviewCollection = database.collection('review');
         
         // Get all products 
          app.get('/products', async (req, res) => {
@@ -129,6 +130,21 @@ async function run() {
         }
       
       })
+
+      // add review 
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review)
+            // console.log(result);
+            res.json(result)
+        })
+      
+      // Get review 
+       app.get('/review', async (req, res) => {
+            const cursor = reviewCollection.find({})
+            const review = await cursor.toArray();
+            res.send(review)
+         })
 
        
     } finally {
